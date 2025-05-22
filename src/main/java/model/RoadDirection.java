@@ -28,6 +28,7 @@ public enum RoadDirection {
 
     private RoadDirection(int number, String path) {
         this.number = number;
+        this.path = path;
     }
 
     public static String getDirectionPath(int number) {

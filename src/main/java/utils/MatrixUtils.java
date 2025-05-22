@@ -51,7 +51,7 @@ public class MatrixUtils {
         } catch (IOException ex) {
             Logger.getLogger(MatrixUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
-        matriz = new RoadMutex[Integer.parseInt(lines.get(0))][Integer.parseInt(lines.get(1))];
+        matriz = new RoadMutex[Integer.parseInt(lines.get(0).trim())][Integer.parseInt(lines.get(1).trim())];
         StringBuilder strRoad = new StringBuilder();
 
         // Criacao da matriz

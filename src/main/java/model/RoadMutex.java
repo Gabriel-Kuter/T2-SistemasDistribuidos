@@ -8,6 +8,7 @@ import java.util.concurrent.Semaphore;
 public class RoadMutex extends Block {
 
     private final Semaphore semaphore = new Semaphore(1);
+    private Car car;
 
     public RoadMutex(int direction, int xPos, int yPos) {
         super(direction, xPos, yPos);
@@ -15,5 +16,13 @@ public class RoadMutex extends Block {
 
     public Semaphore getSemaphore() {
         return semaphore;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
+    public Car getCar() {
+        return car;
     }
 }
