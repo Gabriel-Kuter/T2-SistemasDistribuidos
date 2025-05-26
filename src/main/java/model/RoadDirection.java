@@ -9,6 +9,8 @@ import java.util.Map;
 public enum RoadDirection {
 
     NADA(0, "/assets/vazio.png"),
+    NADA2(-1, "/assets/vazio2.png"),
+    NADA3(-2,"/assets/vazio3.png"),
     CIMA(1, "/assets/via_cima.png"),
     DIREITA(2, "/assets/via_direita.png"),
     BAIXO(3, "/assets/via_baixo.png"),

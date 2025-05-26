@@ -2,104 +2,103 @@ package view;
 
 import controller.Controller;
 import controller.Observer;
-import controller.state.Finished;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 public class Index extends JFrame implements Observer {
 
     Table road;
     Controller controller;
     JPanelImage settingsPanel;
-    GridBagLayout gbl = new GridBagLayout();
-    GridBagConstraints layoutConstraint = new GridBagConstraints();
 
-    ArrayList<JComponent> menuComp = new ArrayList<>();
-    JButton btControll; // Controle para iniciar e finaliza a op
-    JLabel lblCar; // Label de indicação: quantidade de carros
+    GridBagConstraints gbc = new GridBagConstraints();
+
+    ArrayList<JComponent> menuComponents = new ArrayList<>();
+    JButton btnInicio; // Controle que inicia ou finaliza a utilização de Threads
+    JLabel lbQtCarro; // Label de indicação: quantidade de carros
     JLabel lblInsertionSpeed;// Label de indicação: delay para inserção de novas threads
-    JLabel lblCarCounter; // Label de indicação: contador de threads
+    JLabel lbQtCarrosAtivos; // Label de indicação: contador de threads
     JLabel lblCounter; // Label de indicação: contador de threads notificável
 
-    JComboBox<String> cbRoadFiles;
+    JComboBox<String> cbMalhas;
     JSpinner tfInsertionSpeed;
     JSpinner tfCar;
 
     public Index() {
         controller = Controller.getInstance();
         controller.addObserver(this);
+
         setTitle("Malha Viária");
         setSize(1400, 825);
-        setLayout(gbl);
-        getContentPane().setBackground(Color.decode("#D3CAC5"));
-        setLocationRelativeTo(null);
-
+        setLayout(new GridBagLayout());
+        getContentPane().setBackground(Color.black);
         buildPanels();
-        setVisible(true);
+        addActions();
+
         controller.notifyControllButton();
     }
 
     public void buildPanels() {
-        layoutConstraint.gridx = 0;
-        layoutConstraint.gridy = 0;
-        layoutConstraint.weighty = 0.1;
+        //Menu
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        settingsPanel = buildMenu(); 
+        add(settingsPanel, gbc);
 
-        // Criação do painel superior
-        settingsPanel = new JPanelImage("/assets/settings.png", 1300, 65);
-        settingsPanel.setPreferredSize(new Dimension(settingsPanel.getWidth(), settingsPanel.getHeight()));
-        settingsPanel.setOpaque(false);
-        initilizeMenuComponents();
-        add(settingsPanel, layoutConstraint);
-
-        // Desenhando a malha
+        //Grid Malha Rodoviária
+        gbc.gridy = 1;
         road = new Table();
-        layoutConstraint.weighty = 0.9;
-        layoutConstraint.gridy = 1;
-        add(road, layoutConstraint);
+        add(road, gbc);
 
         controller.notifyInitFiles();
     }
 
-    private void initilizeMenuComponents() {
-
+    private JPanelImage buildMenu() {
+        settingsPanel = new JPanelImage("/assets/top.png", 1300, 65);
+        settingsPanel.setPreferredSize(new Dimension(settingsPanel.getWidth(), settingsPanel.getHeight()));
+        settingsPanel.setBorder(new LineBorder(new Color(255,51,255)));
         settingsPanel.setLayout(new GridBagLayout());
-        GridBagConstraints mLayout = new GridBagConstraints();
 
-        btControll = new JButton("Iniciar");
-        cbRoadFiles = new JComboBox();
-        lblCar = new JLabel("Quantidade de carros: ");
+        btnInicio = new JButton("Iniciar");
+        cbMalhas = new JComboBox();
+        lbQtCarro = new JLabel("Quantidade de carros: ");
+        lbQtCarro.setForeground(Color.white);
         lblInsertionSpeed = new JLabel("Delay de inserção: ");
-        lblCarCounter = new JLabel("Quantidade de carros passeando: ");
+        lblInsertionSpeed.setForeground(Color.white);
+        lbQtCarrosAtivos = new JLabel("Quantidade de Threads Ativas: ");
+        lbQtCarrosAtivos.setForeground(Color.white);
         lblCounter = new JLabel("0");
+        lblCounter.setForeground(Color.white);
         tfCar = new JSpinner(new SpinnerNumberModel(1, 1, 200, 1));
         tfInsertionSpeed = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 
-        menuComp.add(btControll);
-        menuComp.add(cbRoadFiles);
-        menuComp.add(lblCar);
-        menuComp.add(tfCar);
-        menuComp.add(lblInsertionSpeed);
-        menuComp.add(tfInsertionSpeed);
-        menuComp.add(lblCarCounter);
-        menuComp.add(lblCounter);
+        menuComponents.add(btnInicio);
+        menuComponents.add(cbMalhas);
+        menuComponents.add(lbQtCarro);
+        menuComponents.add(tfCar);
+        menuComponents.add(lblInsertionSpeed);
+        menuComponents.add(tfInsertionSpeed);
+        menuComponents.add(lbQtCarrosAtivos);
+        menuComponents.add(lblCounter);
 
-        mLayout.gridx = 0;
-        mLayout.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
-        for (int i = 0; i < menuComp.size(); i++) {
-            mLayout.gridx = i;
-            mLayout.weightx = 1.0;
-            settingsPanel.add(menuComp.get(i), mLayout);
+        for (int i = 0; i < menuComponents.size(); i++) {
+            gbc.gridx = i;
+            gbc.weightx = 1;
+            settingsPanel.add(menuComponents.get(i), gbc);
         }
 
-        addActions();
+        return settingsPanel;
     }
 
     // Controller Actions
     private void addActions() {
-        btControll.addActionListener((ActionEvent e) -> {
+        btnInicio.addActionListener((ActionEvent e) -> {
             if (controller.isStopped()) {
                 controller.setQtdCar((int) tfCar.getValue());
                 controller.setAwait((int) tfInsertionSpeed.getValue());
@@ -107,8 +106,8 @@ public class Index extends JFrame implements Observer {
             controller.getControllerState().nextState();
         });
 
-        cbRoadFiles.addActionListener((ActionEvent e) -> {
-            controller.setFilename(controller.getFilePaths().get((String) cbRoadFiles.getSelectedItem()));
+        cbMalhas.addActionListener((ActionEvent e) -> {
+            controller.setFilename(controller.getFilePaths().get((String) cbMalhas.getSelectedItem()));
             controller.getMatrixRoad().generateMapFromFile(controller.getFilename());
             road.draw();
         });
@@ -117,8 +116,8 @@ public class Index extends JFrame implements Observer {
     // Observer updates
     @Override
     public void updateControllStatus(boolean isStopped) {
-        cbRoadFiles.setEnabled(isStopped);
-        btControll.setText(controller.getControllerState().getNextAction());
+        cbMalhas.setEnabled(isStopped);
+        btnInicio.setText(controller.getControllerState().getNextAction());
     }
 
     @Override
@@ -133,7 +132,7 @@ public class Index extends JFrame implements Observer {
     @Override
     public void initRoadFiles(String[] roadFiles) {
         for (String file : roadFiles) {
-            cbRoadFiles.addItem(file);
+            cbMalhas.addItem(file);
         }
     }
 

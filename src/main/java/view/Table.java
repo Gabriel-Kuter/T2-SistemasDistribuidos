@@ -4,6 +4,8 @@ import controller.Controller;
 import controller.Observer;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.Random;
+
 import javax.swing.*;
 import model.RoadDirection;
 
@@ -35,7 +37,14 @@ public class Table extends JPanel implements Observer {
         this.removeAll();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                String p = RoadDirection.getDirectionPath(c.getMatrixRoad().getCellDirection(i, j));
+                String p;
+                if (c.getMatrixRoad().getCellDirection(i, j) == 0) {
+                    Random r = new Random();
+                    int choice = r.nextInt(3)*-1;
+                    p = RoadDirection.getDirectionPath(choice);
+                } else {
+                    p = RoadDirection.getDirectionPath(c.getMatrixRoad().getCellDirection(i, j));
+                }   
                 Cell cell = new Cell(p, cellSize, cellSize);
                 road[i][j] = cell;
                 this.add(cell);
